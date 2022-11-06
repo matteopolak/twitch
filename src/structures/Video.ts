@@ -5,7 +5,7 @@ import { formatSeconds } from '../util/time';
 
 export class Video {
 	private data: RawVideoNode;
-	private videoId: number;
+	public videoId: number;
 
 	constructor(data: RawVideoNode) {
 		this.data = data;

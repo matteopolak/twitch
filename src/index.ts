@@ -10,7 +10,13 @@ async function main() {
 
 	await channel.save();
 
+	let skip = true;
+
 	for await (const video of channel.videos()) {
+		if (video.videoId === 1603227070) {
+			skip = false;
+		} else if (skip) continue;
+
 		await video.save();
 		await video.saveComments();
 	}
