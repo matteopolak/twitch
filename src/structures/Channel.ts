@@ -1,21 +1,21 @@
 import axios from 'axios';
 import { prisma } from '../database';
-import { GqlResponse, RawTrackedUser, RawUser } from '../typings';
+import { GqlResponse, RawChannel, RawTrackedUser, RawUser } from '../typings';
 import { Video } from './Video';
 
 export class Channel {
 	public user: RawUser;
-	public data: RawTrackedUser;
+	public data: RawChannel;
 	public userId: number;
 
-	constructor(user: RawUser, data: RawTrackedUser) {
+	constructor(user: RawUser, data: RawChannel) {
 		this.user = user;
 		this.data = data;
 		this.userId = parseInt(this.data.id);
 	}
 
 	public static async fromUsername(username: string) {
-		const { data } = await axios.post<GqlResponse<{ user: RawTrackedUser }>>(
+		const { data } = await axios.post<GqlResponse<{ user: RawChannel }>>(
 			'/gql',
 			{
 				operationName: 'PlayerTrackingContextQuery',
@@ -44,10 +44,10 @@ export class Channel {
 		>('/gql', {
 			operationName: 'ViewerCard',
 			variables: {
-				channelID: '71092938',
-				channelLogin: 'xqc',
+				channelID: data.data.user.id,
+				channelLogin: data.data.user.login,
 				hasChannelID: true,
-				giftRecipientLogin: 'fossabot',
+				giftRecipientLogin: data.data.user.login,
 				isViewerBadgeCollectionEnabled: false,
 				withStandardGifting: false,
 			},
