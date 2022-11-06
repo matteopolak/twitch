@@ -16,7 +16,7 @@ async function main() {
 			authorId: channel.userId,
 		},
 		orderBy: {
-			createdAt: 'asc',
+			createdAt: 'desc',
 		},
 		take: 1,
 	});
