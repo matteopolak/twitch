@@ -11,26 +11,22 @@ async function main() {
 
 	await channel.save();
 
-	const last = await prisma.video.findMany({
+	const end = await prisma.video.findMany({
 		where: {
 			authorId: channel.userId,
 		},
 		orderBy: {
-			createdAt: 'desc',
+			createdAt: 'asc',
 		},
 		take: 1,
 	});
 
-	const skipUntil = last.at(-1)?.id;
-	let skip = skipUntil !== undefined;
+	const continueUntil = end.at(-1)?.id;
+	const videos = channel.videos();
 
-	for await (const video of channel.videos()) {
-		if (skip) {
-			if (video.videoId === skipUntil) {
-				skip = false;
-			} else {
-				continue;
-			}
+	for await (const video of videos) {
+		if (continueUntil !== undefined && video.videoId === continueUntil) {
+			break;
 		}
 
 		await video.save();
