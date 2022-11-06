@@ -1,9 +1,23 @@
-interface Edge<T> {
+export interface Edge<T> {
 	cursor: string;
 	node: T;
 }
 
-interface RawCommentNode {
+export interface GqlResponse<T> {
+	data: T;
+	extensions: RawExtension;
+}
+
+export interface EdgeContainer<T> {
+	edges: Edge<T>[];
+	pageInfo: {
+		hasNextPage: boolean;
+		hasPreviousPage: boolean;
+		__typename: 'PageInfo';
+	};
+}
+
+export interface RawCommentNode {
 	id: string;
 	commenter: null | {
 		id: string;
@@ -36,17 +50,9 @@ interface RawCommentNode {
 	__typename: 'VideoComment';
 }
 
-interface RawComment {
-	edges: Edge<RawCommentNode>[];
-	pageInfo: {
-		hasNextPage: boolean;
-		hasPreviousPage: boolean;
-		__typename: 'PageInfo';
-	};
-	__typename: 'VideoCommentConnection';
-}
+export type RawComment = EdgeContainer<RawCommentNode>;
 
-interface RawVideoContent {
+export interface RawVideoContent {
 	id: string;
 	creator: {
 		id: string;
@@ -60,7 +66,7 @@ interface RawVideoContent {
 	__typename: 'Video';
 }
 
-interface RawVideoNode {
+export interface RawVideoNode {
 	animatedPreviewURL: string;
 	game: {
 		boxArtURL: string;
@@ -99,31 +105,43 @@ interface RawVideoNode {
 	__typename: 'Video';
 }
 
-interface RawExtension {
+export interface RawExtension {
 	durationMilliseconds: number;
 	operationName: 'VideoCommentsByOffsetOrCursor';
 	requestID: string;
 }
 
-interface GqlResponse<T> {
-	data: T;
-	extensions: RawExtension;
-}
-
-interface RawUser {
+export interface RawTrackedUser {
 	id: string;
-	videos: {
-		edges: Edge<RawVideoNode>[];
-		pageInfo: {
-			hasNextPage: boolean;
-			__typename: 'PageInfo';
-		};
-		__typename: 'VideoConnection';
-	};
+	videos: null | EdgeContainer<RawVideoNode>;
 	__typename: 'User';
 }
 
-interface RawChannel {
+export interface RawUser {
+	id: string;
+	login: string;
+	bannerImageURL: string;
+	displayName: string;
+	displayBadges: {
+		id: string;
+		setID: string;
+		version: string;
+		title: string;
+		image1x: string;
+		image2x: string;
+		image4x: string;
+		clickAction: null;
+		clickURL: null;
+		description: string;
+		__typename: 'Badge';
+	}[];
+	profileImageURL: string;
+	createdAt: string;
+	relationship: null;
+	__typename: 'User';
+}
+
+export interface RawChannel {
 	id: string;
 	login: string;
 	isPartner: boolean;

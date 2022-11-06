@@ -1,10 +1,11 @@
 import { Prisma } from '@prisma/client';
 import axios from 'axios';
 import { prisma } from '../database';
+import { RawVideoNode, GqlResponse, RawVideoContent } from '../typings';
 import { formatSeconds } from '../util/time';
 
 export class Video {
-	private data: RawVideoNode;
+	public data: RawVideoNode;
 	public videoId: number;
 
 	constructor(data: RawVideoNode) {
@@ -57,19 +58,20 @@ export class Video {
 	}
 
 	public async save() {
-		await prisma.videoEdge.upsert({
+		await prisma.video.upsert({
 			where: { id: this.videoId },
 			update: {},
 			create: {
 				id: this.videoId,
 				authorId: parseInt(this.data.owner.id),
+				createdAt: this.data.publishedAt,
 			},
 		});
 	}
 
 	public async saveComments(verbose = true) {
 		for await (const content of this.commentsBatch()) {
-			const comments: Prisma.CommentEdgeCreateManyInput[] = [];
+			const comments: Prisma.CommentCreateManyInput[] = [];
 			const fragments: Prisma.CommentFragmentCreateManyInput[] = [];
 			const users: Map<number, Prisma.UserCreateManyInput> = new Map();
 
@@ -85,11 +87,12 @@ export class Video {
 					id: comment.node.id,
 					userId,
 					videoId: this.videoId,
+					createdAt: comment.node.createdAt,
 				});
 
 				fragments.push(
 					...comment.node.message.fragments.map(f => ({
-						commentEdgeId: comment.node.id,
+						commentId: comment.node.id,
 						text: f.text,
 						emote: f.emote?.emoteID ?? null,
 					}))
@@ -108,7 +111,7 @@ export class Video {
 				skipDuplicates: true,
 			});
 
-			await prisma.commentEdge.createMany({
+			await prisma.comment.createMany({
 				data: comments,
 				skipDuplicates: true,
 			});

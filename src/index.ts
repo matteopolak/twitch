@@ -1,5 +1,6 @@
 import axios from 'axios';
 import 'dotenv/config';
+import { prisma } from './database';
 import { Channel } from './structures/Channel';
 
 axios.defaults.baseURL = 'https://gql.twitch.tv';
@@ -10,12 +11,27 @@ async function main() {
 
 	await channel.save();
 
-	let skip = true;
+	const last = await prisma.video.findMany({
+		where: {
+			authorId: channel.userId,
+		},
+		orderBy: {
+			createdAt: 'desc',
+		},
+		take: 1,
+	});
+
+	const skipUntil = last.at(-1)?.id;
+	let skip = skipUntil !== undefined;
 
 	for await (const video of channel.videos()) {
-		if (video.videoId === 1603227070) {
-			skip = false;
-		} else if (skip) continue;
+		if (skip) {
+			if (video.videoId === skipUntil) {
+				skip = false;
+			} else {
+				continue;
+			}
+		}
 
 		await video.save();
 		await video.saveComments();
