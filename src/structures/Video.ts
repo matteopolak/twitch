@@ -91,10 +91,11 @@ export class Video {
 				});
 
 				fragments.push(
-					...comment.node.message.fragments.map(f => ({
+					...comment.node.message.fragments.map((f, i) => ({
 						commentId: comment.node.id,
 						text: f.text,
 						emote: f.emote?.emoteID ?? null,
+						index: i,
 					}))
 				);
 

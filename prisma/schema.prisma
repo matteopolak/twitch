@@ -11,27 +11,29 @@ datasource db {
 }
 
 model CommentFragment {
-  id        Int     @id @default(autoincrement())
-  comment   Comment @relation(fields: [commentId], references: [id])
+  index     Int
   commentId String  @db.Uuid
+  comment   Comment @relation(fields: [commentId], references: [id])
   text      String
   emote     String?
+
+  @@id([index, commentId])
 }
 
 model Comment {
   id        String            @id @db.Uuid
-  user      User              @relation(fields: [userId], references: [id])
   userId    Int
-  video     Video             @relation(fields: [videoId], references: [id])
+  user      User              @relation(fields: [userId], references: [id])
   videoId   Int
+  video     Video             @relation(fields: [videoId], references: [id])
   fragments CommentFragment[]
   createdAt DateTime
 }
 
 model Video {
   id        Int       @id
-  author    User      @relation(fields: [authorId], references: [id])
   authorId  Int
+  author    User      @relation(fields: [authorId], references: [id])
   comments  Comment[]
   createdAt DateTime
 }
