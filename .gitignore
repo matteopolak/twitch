@@ -1,5 +1,6 @@
 node_modules
 .env
 build
+datasets-build
 prisma/migrations
 tmp

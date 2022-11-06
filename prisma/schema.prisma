@@ -2,7 +2,8 @@
 // learn more about it in the docs: https://pris.ly/d/prisma-schema
 
 generator client {
-  provider = "prisma-client-js"
+  provider        = "prisma-client-js"
+  previewFeatures = ["filteredRelationCount"]
 }
 
 datasource db {
@@ -22,7 +23,7 @@ model CommentFragment {
 
 model Comment {
   id        String            @id @db.Uuid
-  userId    Int
+  userId    BigInt            @db.BigInt
   user      User              @relation(fields: [userId], references: [id])
   videoId   Int
   video     Video             @relation(fields: [videoId], references: [id])
@@ -32,14 +33,14 @@ model Comment {
 
 model Video {
   id        Int       @id
-  authorId  Int
+  authorId  BigInt    @db.BigInt
   author    User      @relation(fields: [authorId], references: [id])
   comments  Comment[]
   createdAt DateTime
 }
 
 model User {
-  id        Int       @id
+  id        BigInt    @id @db.BigInt
   username  String
   comments  Comment[]
   videos    Video[]
