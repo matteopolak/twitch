@@ -25,14 +25,14 @@ model Comment {
   id        String            @id @db.Uuid
   userId    BigInt            @db.BigInt
   user      User              @relation(fields: [userId], references: [id])
-  videoId   Int
+  videoId   BigInt            @db.BigInt
   video     Video             @relation(fields: [videoId], references: [id])
   fragments CommentFragment[]
   createdAt DateTime
 }
 
 model Video {
-  id        Int       @id
+  id        BigInt    @id @db.BigInt
   authorId  BigInt    @db.BigInt
   author    User      @relation(fields: [authorId], references: [id])
   comments  Comment[]
