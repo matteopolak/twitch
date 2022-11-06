@@ -1,4 +1,8 @@
 {
+	"name": "@matteopolak/twitch",
+	"version": "1.0.0",
+	"description": "A chat downloader for Twitch",
+	"main": "src/index.ts",
 	"dependencies": {
 		"@prisma/client": "^4.5.0",
 		"axios": "^1.1.3",
@@ -6,9 +10,22 @@
 	},
 	"devDependencies": {
 		"@types/node": "^18.11.9",
+		"@typescript-eslint/eslint-plugin": "^5.42.0",
+		"@typescript-eslint/parser": "^5.42.0",
+		"eslint": "^8.26.0",
 		"prisma": "^4.5.0"
 	},
 	"scripts": {
 		"start": "tsc --project tsconfig.json && node ./build/index.js"
-	}
+	},
+	"repository": {
+		"type": "git",
+		"url": "git+https://github.com/matteopolak/twitch.git"
+	},
+	"author": "Matthew Polak <contact@matteopolak.com>",
+	"license": "MIT",
+	"bugs": {
+		"url": "https://github.com/matteopolak/twitch/issues"
+	},
+	"homepage": "https://github.com/matteopolak/twitch#readme"
 }
