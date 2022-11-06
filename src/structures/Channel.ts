@@ -44,7 +44,7 @@ export class Channel {
 			operationName: 'FilterableVideoTower_Videos',
 			variables: {
 				limit: 30,
-				channelOwnerLogin: 'atrioc',
+				channelOwnerLogin: this.data.login,
 				broadcastType: 'ARCHIVE',
 				videoSort: 'TIME',
 				cursor: undefined as undefined | string,
