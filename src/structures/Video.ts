@@ -6,11 +6,11 @@ import { formatSeconds } from '../util/time';
 
 export class Video {
 	public data: RawVideoNode;
-	public videoId: number;
+	public videoId: bigint;
 
 	constructor(data: RawVideoNode) {
 		this.data = data;
-		this.videoId = parseInt(data.id);
+		this.videoId = BigInt(data.id);
 	}
 
 	public async *commentsBatch() {

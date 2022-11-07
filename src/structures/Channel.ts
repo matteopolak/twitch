@@ -6,12 +6,12 @@ import { Video } from './Video';
 export class Channel {
 	public user: RawUser;
 	public data: RawChannel;
-	public userId: number;
+	public userId: bigint;
 
 	constructor(user: RawUser, data: RawChannel) {
 		this.user = user;
 		this.data = data;
-		this.userId = parseInt(this.data.id);
+		this.userId = BigInt(this.data.id);
 	}
 
 	public static async fromUsername(username: string) {
@@ -116,5 +116,31 @@ export class Channel {
 				createdAt: this.user.createdAt,
 			},
 		});
+	}
+
+	public async saveVideosAndComments() {
+		await this.save();
+
+		const end = await prisma.video.findMany({
+			where: {
+				authorId: this.userId,
+			},
+			orderBy: {
+				createdAt: 'desc',
+			},
+			take: 1,
+		});
+
+		const continueUntil = end.at(-1)?.id;
+		const videos = this.videos();
+
+		for await (const video of videos) {
+			if (continueUntil !== undefined && video.videoId === continueUntil) {
+				break;
+			}
+
+			await video.save();
+			await video.saveComments();
+		}
 	}
 }
