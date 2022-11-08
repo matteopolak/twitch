@@ -9,7 +9,7 @@ export interface GqlResponse<T> {
 }
 
 export interface EdgeContainer<T> {
-	edges: Edge<T>[];
+	edges: Edge<T>[] | null;
 	pageInfo: {
 		hasNextPage: boolean;
 		hasPreviousPage: boolean;

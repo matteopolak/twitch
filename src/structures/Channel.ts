@@ -39,6 +39,8 @@ export class Channel {
 			}
 		);
 
+		console.log(data);
+
 		const { data: user } = await axios.post<
 			GqlResponse<{ targetUser: RawUser }>
 		>('/gql', {
@@ -59,6 +61,8 @@ export class Channel {
 				},
 			},
 		});
+
+		console.log(user);
 
 		return new Channel(user.data.targetUser, data.data.user);
 	}
@@ -90,16 +94,18 @@ export class Channel {
 				payload
 			);
 
-			if (data.data.user.videos === null) continue;
+			const videos = data.data.user.videos;
+			if (!videos) continue;
 
-			const videos = data.data.user.videos.edges;
+			const edges = videos.edges;
+			if (!edges) continue;
 
-			for (const video of videos) {
+			for (const video of edges) {
 				yield new Video(video.node);
 			}
 
-			if ((hasNext = data.data.user.videos.pageInfo.hasNextPage)) {
-				payload.variables.cursor = data.data.user.videos.edges.at(-1)?.cursor;
+			if ((hasNext = videos.pageInfo.hasNextPage)) {
+				payload.variables.cursor = edges.at(-1)?.cursor;
 			}
 		}
 	}

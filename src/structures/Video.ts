@@ -38,22 +38,23 @@ export class Video {
 			>('/gql', payload);
 
 			if (data.data.video === null) break;
+			hasNext = data.data.video.comments.pageInfo.hasNextPage;
+
+			const edges = data.data.video.comments.edges;
+			if (!edges) continue;
 
 			yield data;
 
-			hasNext = data.data.video.comments.pageInfo.hasNextPage;
-
 			if (hasNext) {
 				payload.variables.contentOffsetSeconds = undefined;
-				payload.variables.cursor =
-					data.data.video.comments.edges.at(-1)?.cursor;
+				payload.variables.cursor = edges.at(-1)?.cursor;
 			}
 		}
 	}
 
 	public async *comments() {
 		for await (const data of this.commentsBatch()) {
-			yield* data.data.video.comments.edges;
+			yield* data.data.video.comments.edges!;
 		}
 	}
 
@@ -75,10 +76,13 @@ export class Video {
 			const fragments: Prisma.CommentFragmentCreateManyInput[] = [];
 			const users: Map<number, Prisma.UserCreateManyInput> = new Map();
 
-			const last = content.data.video.comments.edges.at(-1);
+			const edges = content.data.video.comments.edges;
+			if (!edges) continue;
+
+			const last = edges.at(-1);
 			const time = last?.node.contentOffsetSeconds ?? 0;
 
-			for (const comment of content.data.video.comments.edges) {
+			for (const comment of edges) {
 				if (comment.node.commenter === null) continue;
 
 				const userId = parseInt(comment.node.commenter.id);
